@@ -107,17 +107,14 @@ function fzf-cdr() {
     #     cd $target_dir
     # fi
 }
-
 fadd() {
   local out q n addfiles
-  while out=$(
-      git status --short |
-      awk '{if (substr($0,2,1) !~ / /) print $2}' |
-      fzf-tmux --multi --exit-0 --expect=ctrl-d); do
+  while out=$(git status --short |awk '{if (substr($0,2,1) !~ / /) print}' | fzf --multi --exit-0 --expect=ctrl-d --height=100% \
+	  --preview="echo {} | awk '{print \$2}' | xargs git diff --color" | awk '{if (NR==1)print;else print $2}'); do
     q=$(head -1 <<< "$out")
     n=$[$(wc -l <<< "$out") - 1]
     addfiles=(`echo $(tail "-$n" <<< "$out")`)
-    [[ -z "$addfiles" ]] && continue
+    [[ -z "$addfiles" ]] && break
     if [ "$q" = ctrl-d ]; then
       git diff --color=always $addfiles | less -R
     else

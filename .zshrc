@@ -132,7 +132,7 @@ if [ ! -e ~/.zplug/init.zsh ]; then
 	curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
 fi
 source ~/.zplug/init.zsh
-zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+zplug "zplug/zplug", hook-build:'zplug --self-manage'
 # theme (https://github.com/sindresorhus/pure#zplug) 好みのスキーマをいれてくだされ。
 zplug "mafredri/zsh-async"
 zplug "sindresorhus/pure"
@@ -144,113 +144,31 @@ zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions"
 zplug "chrissicool/zsh-256color"
-
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
-zplug "mollifier/anyframe"
 zplug "motemen/ghq"
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-	printf "Install? [y/N]: "
-	if read -q; then
-		echo; zplug install
-	fi
+if ! zplug check; then
+    zplug install
 fi
-# Then, source plugins and add commands to $PATH
+# プラグインを読み込み，コマンドにパスを通す
 zplug load
 
-# fzfの設定
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+# .zshrc.d内の設定ファイルの読み込み
+ZSHHOME="${HOME}/.zshrc.d"
 
-# fkill - kill process
-fkill() {
-  local pid
-  pid=$(ps aux | fzf | awk '{ print $2 }')
-
-  if [ "x$pid" != "x" ]
-  then
-    BUFFER="kill $pid"
-    zle accept-line
-  fi
-  zle reset-prompt
-}
-
-# fd - cd to selected directory
-fd() {
-  local dir
-  #dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf +m) &&
-  dir=$(find 2> /dev/null | fzf +m) &&
-  cd "$dir"
-}
-
-fresource() {
-	local dir
-	dir=$(du -d 1 -ba | sort -rn | numfmt --to=iec --suffix=B --padding=5 | fzf | awk '{ print $2 }') &&
-	cd "$dir"
-}
-
-function history-fzf() {
-  local tac
-
-  if which tac > /dev/null; then
-    tac="tac"
-  else
-    tac="tail -r"
-  fi
-
-  BUFFER=$(history -n 1 | eval $tac | fzf --query "$LBUFFER")
-  CURSOR=$#BUFFER
-
-  zle reset-prompt
-}
-
-function tree-fzf() {
-  local SELECTED_FILE=$(tree --charset=o -f | fzf --query "$LBUFFER" | tr -d '\||`|-' | xargs echo)
-
-  if [ "$SELECTED_FILE" != "" ]; then
-    BUFFER="$EDITOR $SELECTED_FILE"
-    zle accept-line
-  fi
-
-  zle reset-prompt
-}
-
-zle -N fkill
-bindkey '^xk' fkill
-bindkey '^x^k' fkill
-zle -N history-fzf
-bindkey '^r' history-fzf
-zle -N tree-fzf
-bindkey "^t" tree-fzf
-
-# anyframe
-# expressly specify to use fzf
-zstyle ":anyframe:selector:" use fzf
-# bindkey
-bindkey '^x^r' anyframe-widget-cdr
-
-bindkey '^x^b' anyframe-widget-checkout-git-branch
-
-bindkey '^xp' anyframe-widget-put-history
-bindkey '^x^p' anyframe-widget-put-history
-
-bindkey '^xe' anyframe-widget-execute-history
-bindkey '^x^e' anyframe-widget-execute-history
-
-#bindkey '^xk' anyframe-widget-kill
-#bindkey '^x^k' anyframe-widget-kill
-
-bindkey '^xi' anyframe-widget-insert-git-branch
-bindkey '^x^i' anyframe-widget-insert-git-branch
-
-bindkey '^xf' anyframe-widget-insert-filename
-bindkey '^x^f' anyframe-widget-insert-filename
+if [ -d $ZSHHOME -a -r $ZSHHOME -a \
+     -x $ZSHHOME ]; then
+    for i in $ZSHHOME/*; do
+        [[ ${i##*/} = *.zsh ]] &&
+            [ \( -f $i -o -h $i \) -a -r $i ] && . $i
+    done
+fi
 
 #エイリアス
 alias ll='ls -lh --color'
 alias la='ls -a --color'
 alias vim='nvim'
-alias dropbox='dropbox.py'
+# alias dropbox='dropbox.py'
 alias cl='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG'
 alias clo='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -O3'
 
@@ -264,9 +182,9 @@ else
     source /home/watanabe/bin/load_keymap_jp_to_us.sh &
 fi
 
-if [ `dropbox status | grep -c "Dropbox isn't running"` -eq 1 ]; then
-	dropbox start 1>/dev/null 2>&1  &
-fi
+#if [ `dropbox status | grep -c "Dropbox isn't running"` -eq 1 ]; then
+#	dropbox start 1>/dev/null 2>&1  &
+#fi
 
 xkbset ma 200 10 3 1 50
 xset r rate 300 25
@@ -290,3 +208,10 @@ export TODOACHIEVE="/home/watanabe/Dropbox/アプリ/db_pythonista_synchronator/
 
 CPLUS_INCLUDE_PATH=~/.local/include/:$CPLUS_INCLUDE_PATH
 export PATH="$HOME/.cargo/bin:$PATH"
+
+#ranger用
+export EDITOR="nvim"
+
+[ -f $ZSHHOME/.fzf.zsh ] && source $ZSHHOME/.fzf.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

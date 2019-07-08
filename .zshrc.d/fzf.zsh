@@ -77,8 +77,12 @@ fd() {
 
 fresource() {
 	local dir
-	dir=$(du -d 1 -ba | sort -rn | numfmt --to=iec --suffix=B --padding=5 | fzf --bind=ctrl-r:toggle-sort| awk '{ print $2 }') &&
-	cd "$dir"
+	dir=$(du -d 1 -ba 2>/dev/null| sort -rn | numfmt --to=iec --suffix=B --padding=5 | fzf --bind=ctrl-r:toggle-sort| awk '{ print $2 }')
+    if [ -n "$dir" ]; then
+		BUFFER="cd ${dir}"
+		zle accept-line
+    fi
+	zle reset-prompt
 }
 
 # fshow - git commit browser
@@ -99,14 +103,12 @@ function fzf-cdr() {
 	target_dir=$(cdr -l | sed 's/^[^ ][^ ]*  *//' | fzf)
 	target_dir=$(echo ${target_dir/\~/$HOME})
     if [ -n "$target_dir" ]; then
-        cd $target_dir
+		BUFFER="cd ${target_dir}"
+		zle accept-line
     fi
 	zle reset-prompt
-    # target_dir=`echo ${target_dir/\~/$HOME}`
-    # if [ -n "$target_dir" ]; then
-    #     cd $target_dir
-    # fi
 }
+
 fadd() {
   local out q n addfiles
   while out=$(git status --short |awk '{if (substr($0,2,1) !~ / /) print}' | fzf --multi --exit-0 --expect=ctrl-d --height=100% \
@@ -125,8 +127,11 @@ fadd() {
 
 alias co='git checkout $(git branch -a | tr -d " " |fzf --height 100% --prompt "CHECKOUT BRANCH>" --preview "git log --color=always {}" \
 	| head -n 1 | sed -e "s/^\*\s*//g" | perl -pe "s/remotes\/origin\///g")'
+
 zle -N fkill
 bindkey '^xk' fkill
 bindkey '^x^k' fkill
 zle -N fzf-cdr
 bindkey '^x^r' fzf-cdr
+zle -N fresource
+bindkey '^xr' fresource

@@ -197,17 +197,14 @@ if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
 fi
 
 # Rustのpathとか設定
-export PATH="$PATH:$HOME/.cargo/bin"
 export RUST_BACKTRACE=1
-
-export PATH="$PATH:/home/watanabe/git/cquery/debug/debug/bin"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 #todo用の環境変数設定
 export TODOSAVE="/home/watanabe/Dropbox/アプリ/db_pythonista_synchronator/todo/"
 export TODOACHIEVE="/home/watanabe/Dropbox/アプリ/db_pythonista_synchronator/todo/"
 
-CPLUS_INCLUDE_PATH=~/.local/include/:$CPLUS_INCLUDE_PATH
-export PATH="$HOME/.cargo/bin:$PATH"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.local/lib/
 
 #ranger用
 export EDITOR="nvim"

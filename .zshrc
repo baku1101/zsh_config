@@ -121,6 +121,7 @@ zplugin light zsh-users/zsh-history-substring-search
 zplugin light zsh-users/zsh-autosuggestions
 zplugin light zsh-users/zsh-completions
 zplugin light chrissicool/zsh-256color
+zplugin light seebi/dircolors-solarized
 zplugin ice frmo"gh-r" as"program"; zplugin load junegunn/fzf-bin
 
 # .zshrc.d内の設定ファイルの読み込み
@@ -139,7 +140,7 @@ autoload colors
 colors
 
 export LSCOLORS=gxfxcxdxbxegedabagacag
-eval $(dircolors /home/watanabe/git/dircolors-solarized/dircolors.256dark)
+eval $(dircolors $HOME/.zplugin/plugins/seebi---dircolors-solarized/dircolors.256dark)
 
 # 補完候補もLS_COLORSに合わせて色が付くようにする
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
@@ -170,9 +171,9 @@ alias clo='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -O3'
 # ノーパソのキーボードならload_keymap_jp_to_us (default)
 # usbキーボード(HHKBを想定)だとload_keymap_usをログイン時に(?)それぞれ実行するようにする
 if [ `lsusb 2>&1 | egrep -c 'PFU|HHKB'` -ne 0 ]; then
-    source /home/watanabe/bin/load_keymap_us.sh &
+    source /home/watanabe/bin/load_keymap_us.sh
 else
-    source /home/watanabe/bin/load_keymap_jp_to_us.sh &
+    source /home/watanabe/bin/load_keymap_jp_to_us.sh
 fi
 
 #if [ `dropbox status | grep -c "Dropbox isn't running"` -eq 1 ]; then

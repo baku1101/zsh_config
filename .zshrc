@@ -30,7 +30,7 @@ hash -d hoge=/long/path/to/hogehoge
 
 # cd した先のディレクトリをディレクトリスタックに追加する
 # ディレクトリスタックとは今までに行ったディレクトリの履歴のこと
-# `cd +<Tab>` でディレクトリの履歴が表示され、そこに移動できる
+# `cd + -<Tab>` でディレクトリの履歴が表示され、そこに移動できる
 setopt auto_pushd
 
 # pushd したとき、ディレクトリがすでにスタックに含まれていればスタックに追加しない
@@ -70,7 +70,7 @@ bindkey "^k" history-beginning-search-forward-end
 
 # 履歴を複数の端末で共有する
 setopt share_history
-
+ 
 # 直前と同じコマンドの場合は履歴に追加しない
 setopt hist_ignore_dups
 
@@ -101,6 +101,38 @@ zstyle ':completion:*:default' menu select=1
 # こうすると、 Ctrl-W でカーソル前の1単語を削除したとき、 / までで削除が止まる
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
+# zplugin
+if [ ! -e ~/.zplugin/bin/zplugin.zsh ]; then
+	echo "install zplugin ..."
+	echo "sh -c '$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)'"
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+fi
+source "$HOME/.zplugin/bin/zplugin.zsh"
+autoload -Uz _zplugin
+(( ${+_comps} )) && _comps[zplugin]=_zplugin
+
+zplugin light mafredri/zsh-async
+zplugin light sindresorhus/pure
+# 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
+zplugin light zsh-users/zsh-syntax-highlighting
+# history関係
+zplugin light zsh-users/zsh-history-substring-search
+# タイプ補完
+zplugin light zsh-users/zsh-autosuggestions
+zplugin light zsh-users/zsh-completions
+zplugin light chrissicool/zsh-256color
+zplugin ice frmo"gh-r" as"program"; zplugin load junegunn/fzf-bin
+
+# .zshrc.d内の設定ファイルの読み込み
+ZSHHOME="${HOME}/.zshrc.d"
+
+if [ -d $ZSHHOME -a -r $ZSHHOME -a \
+     -x $ZSHHOME ]; then
+    for i in $ZSHHOME/*; do
+        [[ ${i##*/} = *.zsh ]] &&
+            [ \( -f $i -o -h $i \) -a -r $i ] && . $i
+    done
+fi
 
 # ls色付け
 autoload colors
@@ -124,45 +156,6 @@ case "${OSTYPE}" in
 		;;
 esac
 
-
-# zplug関連
-if [ ! -e ~/.zplug/init.zsh ]; then
-	echo "install zplug ..."
-	echo "curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh"
-	curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
-fi
-source ~/.zplug/init.zsh
-zplug "zplug/zplug", hook-build:'zplug --self-manage'
-# theme (https://github.com/sindresorhus/pure#zplug) 好みのスキーマをいれてくだされ。
-zplug "mafredri/zsh-async"
-zplug "sindresorhus/pure"
-# 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
-zplug "zsh-users/zsh-syntax-highlighting"
-# history関係
-zplug "zsh-users/zsh-history-substring-search"
-# タイプ補完
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
-zplug "chrissicool/zsh-256color"
-zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:fzf
-zplug "motemen/ghq"
-# Install plugins if there are plugins that have not been installed
-if ! zplug check; then
-    zplug install
-fi
-# プラグインを読み込み，コマンドにパスを通す
-zplug load
-
-# .zshrc.d内の設定ファイルの読み込み
-ZSHHOME="${HOME}/.zshrc.d"
-
-if [ -d $ZSHHOME -a -r $ZSHHOME -a \
-     -x $ZSHHOME ]; then
-    for i in $ZSHHOME/*; do
-        [[ ${i##*/} = *.zsh ]] &&
-            [ \( -f $i -o -h $i \) -a -r $i ] && . $i
-    done
-fi
 
 #エイリアス
 alias ll='ls -lh --color'

@@ -111,6 +111,9 @@ source "$HOME/.zplugin/bin/zplugin.zsh"
 autoload -Uz _zplugin
 (( ${+_comps} )) && _comps[zplugin]=_zplugin
 
+declare -A ZPLGM
+# ZPLGM[MUTE_WARNINGS] = 1 # mute message "plugin already registerd"
+
 zplugin light mafredri/zsh-async
 zplugin light sindresorhus/pure
 # 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -122,7 +125,7 @@ zplugin light zsh-users/zsh-autosuggestions
 zplugin light zsh-users/zsh-completions
 zplugin light chrissicool/zsh-256color
 zplugin light seebi/dircolors-solarized
-zplugin ice frmo"gh-r" as"program"; zplugin load junegunn/fzf-bin
+zplugin ice from"gh-r" as"program"; zplugin load junegunn/fzf-bin
 
 # .zshrc.d内の設定ファイルの読み込み
 ZSHHOME="${HOME}/.zshrc.d"
@@ -165,6 +168,8 @@ alias vim='nvim'
 # alias dropbox='dropbox.py'
 alias cl='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG'
 alias clo='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -O3'
+alias rm='trash-put'
+
 
 
 # キーマップ用の設定
@@ -198,7 +203,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export TODOSAVE="/home/watanabe/Dropbox/アプリ/db_pythonista_synchronator/todo/"
 export TODOACHIEVE="/home/watanabe/Dropbox/アプリ/db_pythonista_synchronator/todo/"
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.local/lib/
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.local/lib/
 
 #ranger用
 export EDITOR="nvim"
@@ -206,3 +211,8 @@ export EDITOR="nvim"
 [ -f $ZSHHOME/.fzf.zsh ] && source $ZSHHOME/.fzf.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# golang用
+export GOPATH=$HOME/go
+export GOROOT=$( go env GOROOT )
+export PATH=$GOPATH/bin:$PATH

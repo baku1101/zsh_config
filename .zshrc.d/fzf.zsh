@@ -47,7 +47,7 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 # fkill - kill process
 fkill() {
   local pid
-  pid=$(ps aux | fzf | awk '{ print $2 }')
+  pid=$(ps aux --sort -%cpu | fzf | awk '{ print $2 }')
 
   if [ "x$pid" != "x" ]
   then

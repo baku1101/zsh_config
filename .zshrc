@@ -126,6 +126,7 @@ zplugin light zsh-users/zsh-completions
 zplugin light chrissicool/zsh-256color
 zplugin light seebi/dircolors-solarized
 zplugin ice from"gh-r" as"program"; zplugin load junegunn/fzf-bin
+#snippet
 
 # .zshrc.d内の設定ファイルの読み込み
 ZSHHOME="${HOME}/.zshrc.d"
@@ -166,9 +167,13 @@ alias ll='ls -lh --color'
 alias la='ls -a --color'
 alias vim='nvim'
 # alias dropbox='dropbox.py'
-alias cl='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG'
-alias clo='clang++-6.0 -std=c++14 -Wall -Wno-unused-const-variable -O3'
+alias cl='clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG'
+alias clo='clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -O3'
+alias cll='clang-9 -Wall -g'
+alias cllo='clang-9 -Wall -O3'
 alias rm='trash-put'
+alias spaceToUnderbar='IFS=$'\n'; for A in $(ls --color=never | grep " ") ; do mv $A "$(echo $A | sed -e s/" "/_/g)" ; done'
+alias excel='et'
 
 
 
@@ -188,6 +193,7 @@ fi
 xkbset ma 200 10 3 1 50
 xset r rate 300 25
 
+
 export PATH=$PATH:/home/watanabe/bin
 
 #zcompile自動化
@@ -197,7 +203,7 @@ fi
 
 # Rustのpathとか設定
 export RUST_BACKTRACE=1
-export PATH="$HOME/.cargo/bin:$PATH"
+#export PATH="$HOME/.cargo/bin:$PATH"
 
 #todo用の環境変数設定
 export TODOSAVE="/home/watanabe/Dropbox/アプリ/db_pythonista_synchronator/todo/"
@@ -216,3 +222,10 @@ export EDITOR="nvim"
 export GOPATH=$HOME/go
 export GOROOT=$( go env GOROOT )
 export PATH=$GOPATH/bin:$PATH
+export GO111MODULE=on
+
+#modelsim用
+export PATH=$PATH:$HOME/intelFPGA/19.1/modelsim_ase/bin
+
+# PATHの重複を削除
+typeset -U path PATH

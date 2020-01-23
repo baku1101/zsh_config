@@ -101,31 +101,31 @@ zstyle ':completion:*:default' menu select=1
 # こうすると、 Ctrl-W でカーソル前の1単語を削除したとき、 / までで削除が止まる
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
-# zplugin
-if [ ! -e ~/.zplugin/bin/zplugin.zsh ]; then
-	echo "install zplugin ..."
-	echo "sh -c '$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)'"
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+# zinit
+if [ ! -e ~/.zinit/bin/zinit.zsh ]; then
+	echo "install zinit ..."
+	echo "sh -c '$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)'"
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
 fi
-source "$HOME/.zplugin/bin/zplugin.zsh"
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
 
 declare -A ZPLGM
 # ZPLGM[MUTE_WARNINGS] = 1 # mute message "plugin already registerd"
 
-zplugin light mafredri/zsh-async
-zplugin light sindresorhus/pure
+zinit light mafredri/zsh-async
+zinit light sindresorhus/pure
 # 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
-zplugin light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-syntax-highlighting
 # history関係
-zplugin light zsh-users/zsh-history-substring-search
+zinit light zsh-users/zsh-history-substring-search
 # タイプ補完
-zplugin light zsh-users/zsh-autosuggestions
-zplugin light zsh-users/zsh-completions
-zplugin light chrissicool/zsh-256color
-zplugin light seebi/dircolors-solarized
-zplugin ice from"gh-r" as"program"; zplugin load junegunn/fzf-bin
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+zinit light chrissicool/zsh-256color
+zinit light seebi/dircolors-solarized
+zinit ice from"gh-r" as"program"; zinit load junegunn/fzf-bin
 #snippet
 
 # .zshrc.d内の設定ファイルの読み込み
@@ -144,7 +144,7 @@ autoload colors
 colors
 
 export LSCOLORS=gxfxcxdxbxegedabagacag
-eval $(dircolors $HOME/.zplugin/plugins/seebi---dircolors-solarized/dircolors.256dark)
+eval $(dircolors $HOME/.zinit/plugins/seebi---dircolors-solarized/dircolors.256dark)
 
 # 補完候補もLS_COLORSに合わせて色が付くようにする
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}

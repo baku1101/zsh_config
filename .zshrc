@@ -153,7 +153,7 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 alias_set() {
 	local cmd=(`echo $2`)
 	if type ${cmd[1]} > /dev/null 2>&1; then
-		alias $1="'$2'"
+		alias $1=$2
 	else
 		echo "alias $1='$2' can't set"
 	fi
@@ -171,6 +171,7 @@ alias_set cllo 'clang-9 -Wall -O3'
 alias_set rm 'trash-put'
 alias_set excel 'et'
 alias_set vim 'nvim'
+alias_set fd 'fdfind'
 
 if `type exa >/dev/null 2>&1`; then
 	alias ls='exa'

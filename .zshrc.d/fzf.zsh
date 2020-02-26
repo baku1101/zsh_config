@@ -67,11 +67,11 @@ fe() {
   [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
 }
 
-# fd - cd to selected directory
-fd() {
+# fd - cd to selected directory (include hidden file)
+fdh() {
   local dir
-  dir=$(find ${1:-.} -type d 2> /dev/null \
-	  | fzf +m --bind=ctrl-r:toggle-sort) &&
+  dir=$(fd -H --type d 2> /dev/null \
+	  | fzf --preview 'tree -C {} | head -200') &&
   cd "$dir"
 }
 
@@ -97,7 +97,7 @@ fshow() {
 FZF-EOF"
 }
 
-# fzf-cdr
+# fzf-cdr - 過去に行ったディレクトリに移動
 alias cdd='fzf-cdr'
 function fzf-cdr() {
 	target_dir=$(cdr -l | sed 's/^[^ ][^ ]*  *//' | fzf)

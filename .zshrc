@@ -8,7 +8,7 @@ add-zsh-hook chpwd chpwd_recent_dirs
 # 自動補完を有効にする
 # コマンドの引数やパス名を途中まで入力して <Tab> を押すといい感じに補完してくれる
 # 例： `cd path/to/<Tab>`, `ls -<Tab>`
-autoload -U compinit; compinit -u
+# autoload -U compinit; compinit -u
 
 #XDG Base Directory Speification
 export XDG_CONFIG_HOME=~/.config
@@ -16,8 +16,6 @@ export XDG_CONFIG_HOME=~/.config
 # 入力したコマンドが存在せず、かつディレクトリ名と一致するなら、ディレクトリに cd する
 # 例： /usr/bin と入力すると /usr/bin ディレクトリに移動
 setopt auto_cd
-#cdした後に自動的にlsする
-function chpwd() { ls -F --color }
 
 # ↑を設定すると、 .. とだけ入力したら1つ上のディレクトリに移動できるので……
 # 2つ上、3つ上にも移動できるようにする
@@ -150,32 +148,50 @@ eval $(dircolors $HOME/.zinit/plugins/seebi---dircolors-solarized/dircolors.256d
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 # lsがカラー表示になるようエイリアスを設定
-case "${OSTYPE}" in
-	darwin*)
-		# Mac
-		alias ls="ls -GF"
-		;;
-	linux*)
-		# Linux
-		alias ls='ls -F --color'
-		;;
-esac
-
 
 #エイリアス
-alias ll='ls -lh --color'
-alias la='ls -a --color'
-alias vim='nvim'
-# alias dropbox='dropbox.py'
-alias cl='clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG'
-alias clo='clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -O3'
-alias cll='clang-9 -Wall -g'
-alias cllo='clang-9 -Wall -O3'
-alias rm='trash-put'
-alias spaceToUnderbar='IFS=$'\n'; for A in $(ls --color=never | grep " ") ; do mv $A "$(echo $A | sed -e s/" "/_/g)" ; done'
-alias excel='et'
+alias_set() {
+	local cmd=(`echo $2`)
+	if type ${cmd[1]} > /dev/null 2>&1; then
+		alias $1="'$2'"
+	else
+		echo "alias $1='$2' can't set"
+	fi
+}
 
+spaceToUnderbar() {
+	IFS=$'\n'; for A in $(ls --color=never | grep " ") ; do mv $A "$(echo $A | sed -e s/" "/_/g)" ; done
+}
 
+alias_set cl "clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG"
+#alias cl='clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -g -fsanitize=undefined -D_GLIBCXX_DEBUG'
+alias_set clo 'clang++-9 -std=c++14 -Wall -Wno-unused-const-variable -O3'
+alias_set cll 'clang-9 -Wall -g'
+alias_set cllo 'clang-9 -Wall -O3'
+alias_set rm 'trash-put'
+alias_set excel 'et'
+alias_set vim 'nvim'
+
+if `type exa >/dev/null 2>&1`; then
+	alias ls='exa'
+	alias la='exa -a'
+	alias ll='exa -lh --git'
+else
+	case "${OSTYPE}" in
+		darwin*)
+			# Mac
+			alias ls="ls -GF"
+			;;
+		linux*)
+			# Linux
+			alias ls='ls -F --color'
+			;;
+	esac
+	alias ll='ls -lh'
+	alias la='ls -a'
+fi
+#cdした後に自動的にlsする
+function chpwd() { ls }
 
 # キーマップ用の設定
 # ノーパソのキーボードならload_keymap_jp_to_us (default)
@@ -226,6 +242,15 @@ export GO111MODULE=on
 
 #modelsim用
 export PATH=$PATH:$HOME/intelFPGA/19.1/modelsim_ase/bin
+# npmでインストールしたやつのpath
+export PATH=$PATH:$HOME/node_modules/.bin
 
 # PATHの重複を削除
 typeset -U path PATH
+
+# lldb for python
+export PYTHONPATH="/usr/lib/llvm-7/lib/python2.7/site-packages"
+
+#if (type zprof > /dev/null 2>&1) ;then
+#  zprof
+#fi

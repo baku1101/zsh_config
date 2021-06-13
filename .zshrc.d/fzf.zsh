@@ -51,7 +51,7 @@ fkill() {
 
   if [ "x$pid" != "x" ]
   then
-    BUFFER="kill $pid"
+    BUFFER="kill -9 $pid"
     zle accept-line
   fi
   zle reset-prompt
